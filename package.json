@@ -1,0 +1,20 @@
+{
+  "name": "game-shop",
+  "version": "1.0.0",
+  "description": "เว็บขายไอเท็มเกม โค้ดเกม และไอดีเกม พร้อมระบบตะกร้า, PromptPay QR และกระเป๋าเงิน (Wallet)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "multer": "^2.4.0",
+    "promptpay-qr": "^0.5.0",
+    "qrcode": "^1.5.4"
+  }
+}
