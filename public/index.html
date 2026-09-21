@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Yuri — ไอเท็มเกม โค้ดเกม ไอดีเกม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ===== Sidebar Drawer ===== -->
+<div id="sidebar-overlay" class="sidebar-overlay hidden" onclick="closeSidebar()"></div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">🛒 <span>Yuri</span></div>
+    <button class="icon-btn" onclick="closeSidebar()">✕</button>
+  </div>
+
+  <div class="sidebar-section-label">เมนู</div>
+  <button class="sidebar-link" onclick="showView('shop'); closeSidebar()">🏠 หน้าหลัก</button>
+  <button class="sidebar-link" onclick="showView('shop'); closeSidebar()">🏬 รายการสินค้า</button>
+
+  <div class="sidebar-section-label">เกี่ยวกับเรา</div>
+  <button class="sidebar-link" onclick="showView('reviews'); closeSidebar()">⭐ รีวิวร้าน</button>
+  <button class="sidebar-link" onclick="showView('contact'); closeSidebar()">🎧 ติดต่อเรา</button>
+
+  <div class="sidebar-section-label" id="sidebar-account-label">เข้าสู่ระบบ / สมัครสมาชิก</div>
+  <button class="sidebar-link" id="sidebar-login" onclick="showView('login'); closeSidebar()">➜] เข้าสู่ระบบ</button>
+  <button class="sidebar-link hidden" id="sidebar-register" onclick="showView('register'); closeSidebar()">📝 สมัครสมาชิก</button>
+  <button class="sidebar-link hidden" id="sidebar-orders" onclick="showView('orders'); closeSidebar()">📦 คำสั่งซื้อของฉัน</button>
+  <button class="sidebar-link hidden" id="sidebar-wallet" onclick="showView('wallet'); closeSidebar()">👛 กระเป๋าเงิน</button>
+  <button class="sidebar-link hidden" id="sidebar-admin" onclick="showView('admin'); closeSidebar()">🛠️ แผงแอดมิน</button>
+  <button class="sidebar-link hidden" id="sidebar-logout" onclick="logout(); closeSidebar()">🚪 ออกจากระบบ</button>
+</aside>
+
+<!-- ===== Top Bar ===== -->
+<header class="topbar">
+  <button class="icon-btn hamburger" onclick="openSidebar()">☰</button>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input id="search-box" type="text" placeholder="ค้นหาสินค้า..." oninput="onSearchInput()" />
+  </div>
+  <button class="icon-btn" onclick="showView('cart')">
+    🛒<span id="cart-count" class="badge">0</span>
+  </button>
+  <button class="icon-btn" onclick="toggleSettings()">⚙️</button>
+</header>
+
+<!-- Settings dropdown -->
+<div id="settings-menu" class="settings-menu hidden">
+  <div class="settings-row" id="settings-account"></div>
+  <button onclick="showView('login'); closeSettings()" id="settings-login">เข้าสู่ระบบ</button>
+  <button onclick="showView('register'); closeSettings()" id="settings-register">สมัครสมาชิก</button>
+  <button onclick="showView('wallet'); closeSettings()" id="settings-wallet" class="hidden">กระเป๋าเงิน</button>
+  <button onclick="showView('orders'); closeSettings()" id="settings-orders" class="hidden">คำสั่งซื้อของฉัน</button>
+  <button onclick="logout()" id="settings-logout" class="hidden">ออกจากระบบ</button>
+</div>
+
+<main id="app">
+
+  <!-- ================= SHOP (หน้าหลัก) ================= -->
+  <section id="view-shop" class="view">
+
+    <div id="banner-carousel" class="banner-carousel">
+      <div class="hero-banner">
+        <div class="hero-ribbon">YURI STORE</div>
+        <h1>ร้าน Yuri</h1>
+        <p>ไอเท็มเกม โค้ดเกม ไอดีเกม ของแท้ 100% ส่งไว ปลอดภัย มีรับประกันทุกชิ้น</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card stat-blue">
+        <div class="stat-icon">👤</div>
+        <div class="stat-label">ผู้ใช้งาน</div>
+        <div class="stat-value" id="stat-users">-</div>
+        <div class="stat-unit">คน</div>
+      </div>
+      <div class="stat-card stat-gold">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">ยอดขายรวม</div>
+        <div class="stat-value" id="stat-revenue">-</div>
+        <div class="stat-unit">บาท</div>
+      </div>
+      <div class="stat-card stat-green">
+        <div class="stat-icon">📦</div>
+        <div class="stat-label">สต็อก</div>
+        <div class="stat-value" id="stat-stock">-</div>
+        <div class="stat-unit">ชิ้น</div>
+      </div>
+      <div class="stat-card stat-purple">
+        <div class="stat-icon">🧾</div>
+        <div class="stat-label">ยอดขาย</div>
+        <div class="stat-value" id="stat-sales">-</div>
+        <div class="stat-unit">ครั้ง</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">👍 สินค้าแนะนำ <span class="section-sub">สินค้ามีรับประกันทุกชิ้น!!!</span></div>
+      <div class="section-header-right">
+        <select id="filter-type" onchange="loadShop()">
+          <option value="">ทุกประเภท</option>
+          <option value="item">ไอเท็มเกม</option>
+          <option value="code">โค้ดเกม</option>
+        <option value="account">ไอดีเกม</option>
+        </select>
+        <button class="btn-view-more" onclick="document.getElementById('category-sections').scrollIntoView({behavior:'smooth'})">ดูเพิ่มเติม</button>
+      </div>
+    </div>
+    <div id="featured-grid" class="product-grid"></div>
+
+    <div id="category-sections"></div>
+  </section>
+
+  <!-- ================= CART ================= -->
+  <section id="view-cart" class="view hidden">
+    <h2>🛒 ตะกร้าสินค้า</h2>
+    <div id="cart-list"></div>
+    <div class="cart-summary">
+      <div>ยอดรวม: <strong id="cart-total">0.00 ฿</strong></div>
+      <div class="checkout-buttons">
+        <button class="btn-primary" onclick="checkout('promptpay')">ชำระผ่านพร้อมเพย์</button>
+        <button class="btn-secondary" onclick="checkout('wallet')">ชำระด้วยกระเป๋าเงิน</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHECKOUT / PROMPTPAY QR ================= -->
+  <section id="view-pay" class="view hidden">
+    <h2>ชำระเงินผ่านพร้อมเพย์</h2>
+    <div id="pay-box" class="pay-box"></div>
+  </section>
+
+  <!-- ================= ORDERS ================= -->
+  <section id="view-orders" class="view hidden">
+    <h2>📦 คำสั่งซื้อของฉัน</h2>
+    <div id="orders-list"></div>
+  </section>
+
+  <!-- ================= WALLET ================= -->
+  <section id="view-wallet" class="view hidden">
+    <h2>👛 กระเป๋าเงิน (Wallet)</h2>
+    <p>ยอดคงเหลือ: <strong id="wallet-balance-full">0.00 ฿</strong></p>
+
+    <div class="topup-wizard">
+      <div class="wizard-steps">
+        <div class="wizard-step" data-step="1"><span class="step-num">1</span><span class="step-label">เลือกช่องทาง</span></div>
+        <div class="wizard-step" data-step="2"><span class="step-num">2</span><span class="step-label">จำนวนเงิน</span></div>
+        <div class="wizard-step" data-step="3"><span class="step-num">3</span><span class="step-label">ชำระเงิน</span></div>
+        <div class="wizard-step" data-step="4"><span class="step-num">4</span><span class="step-label">ยืนยัน</span></div>
+        <div class="wizard-step" data-step="5"><span class="step-num">5</span><span class="step-label">สำเร็จ</span></div>
+      </div>
+
+      <div class="wizard-panel" id="wizard-panel-1">
+        <h3>เลือกช่องทางโอนเงิน</h3>
+        <p class="muted">คุณต้องการเติมเงินผ่านช่องทางใด?</p>
+        <div class="channel-grid">
+          <div class="channel-card selected" id="channel-slip">
+            <div class="channel-icon">🧾</div>
+            <div class="channel-name">แบบสลิป</div>
+            <div class="channel-desc">โอนผ่านแอปธนาคาร (พร้อมเพย์)</div>
+            <span class="channel-badge">ไม่มีค่าธรรมเนียม</span>
+          </div>
+          <div class="channel-card disabled" id="channel-angpao">
+            <div class="channel-icon">🧧</div>
+            <div class="channel-name">ซองอั่งเปา</div>
+            <div class="channel-desc">ทรูมันนี่ วอลเล็ท</div>
+            <span class="channel-badge coming-soon">เร็วๆ นี้</span>
+          </div>
+        </div>
+        <div class="wizard-actions">
+          <div></div>
+          <button class="btn-primary" onclick="wizardGoTo(2)">ดำเนินการต่อ →</button>
+        </div>
+      </div>
+
+      <div class="wizard-panel hidden" id="wizard-panel-2">
+        <h3>ระบุจำนวนเงิน</h3>
+        <div class="quick-amounts">
+          <button type="button" onclick="setTopupAmount(50)">50 ฿</button>
+          <button type="button" onclick="setTopupAmount(100)">100 ฿</button>
+          <button type="button" onclick="setTopupAmount(300)">300 ฿</button>
+          <button type="button" onclick="setTopupAmount(500)">500 ฿</button>
+        </div>
+        <input id="topup-amount" type="number" min="20" step="1" placeholder="หรือใส่จำนวนเอง (ขั้นต่ำ 20 บาท)" />
+        <p id="wizard-amount-error" class="error"></p>
+        <div class="wizard-actions">
+          <button class="btn-secondary" onclick="wizardGoTo(1)">← ย้อนกลับ</button>
+          <button class="btn-primary" onclick="wizardGoToPayment()">ดำเนินการต่อ →</button>
+        </div>
+      </div>
+
+      <div class="wizard-panel hidden" id="wizard-panel-3">
+        <h3>ข้อมูลชำระเงิน</h3>
+        <div id="topup-qr-box"></div>
+        <div class="wizard-actions">
+          <button class="btn-secondary" onclick="wizardGoTo(2)">← ย้อนกลับ</button>
+          <button class="btn-primary" onclick="wizardGoTo(4)">ฉันโอนเงินแล้ว →</button>
+        </div>
+      </div>
+
+      <div class="wizard-panel hidden" id="wizard-panel-4">
+        <h3>ยืนยันการโอนเงิน</h3>
+        <div class="info-card">กดยืนยันเพื่อแจ้งแอดมินว่าคุณโอนเงินแล้ว แอดมินจะตรวจสอบยอดและเพิ่มเงินเข้ากระเป๋าให้เร็วที่สุด</div>
+        <div class="wizard-actions">
+          <button class="btn-secondary" onclick="wizardGoTo(3)">← ย้อนกลับ</button>
+          <button class="btn-primary" onclick="confirmTopupSubmitted()">ยืนยันการโอนเงิน →</button>
+        </div>
+      </div>
+
+      <div class="wizard-panel hidden" id="wizard-panel-5">
+        <div class="wizard-success">
+          <div class="success-icon">✅</div>
+          <h3>แจ้งเติมเงินสำเร็จ</h3>
+          <p id="wizard-success-msg" class="muted"></p>
+          <button class="btn-primary" onclick="resetTopupWizard()">เติมเงินอีกครั้ง</button>
+        </div>
+      </div>
+    </div>
+
+    <h3>ประวัติการเติมเงิน</h3>
+    <div id="topup-history"></div>
+  </section>
+
+  <!-- ================= REVIEWS (static placeholder) ================= -->
+  <section id="view-reviews" class="view hidden">
+    <h2>⭐ รีวิวร้าน</h2>
+    <div class="review-summary" id="review-summary"></div>
+
+    <div id="review-form-box" class="hidden">
+      <h3>ให้คะแนนร้านนี้</h3>
+      <form class="auth-form" onsubmit="return submitReview(event)">
+        <div class="star-picker" id="star-picker">
+          <span data-star="1">★</span><span data-star="2">★</span><span data-star="3">★</span><span data-star="4">★</span><span data-star="5">★</span>
+        </div>
+        <textarea id="review-comment" placeholder="เล่าประสบการณ์การซื้อของคุณ (ไม่บังคับ)"></textarea>
+        <button class="btn-primary" type="submit">ส่งรีวิว</button>
+      </form>
+      <p id="review-msg" class="success"></p>
+    </div>
+    <div id="review-login-hint" class="info-card hidden">เข้าสู่ระบบก่อนเพื่อรีวิวร้านนี้</div>
+
+    <h3>รีวิวทั้งหมด</h3>
+    <div id="reviews-list"></div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="view-contact" class="view hidden">
+    <h2>🎧 ติดต่อเรา</h2>
+    <div id="contact-info" class="contact-grid"></div>
+  </section>
+
+  <!-- ================= LOGIN ================= -->
+  <section id="view-login" class="view hidden">
+    <h2>เข้าสู่ระบบ</h2>
+    <form class="auth-form" onsubmit="return login(event)">
+      <input id="login-username" type="text" placeholder="ชื่อผู้ใช้" required />
+      <input id="login-password" type="password" placeholder="รหัสผ่าน" required />
+      <button class="btn-primary" type="submit">เข้าสู่ระบบ</button>
+    </form>
+    <p id="login-error" class="error"></p>
+  </section>
+
+  <!-- ================= REGISTER ================= -->
+  <section id="view-register" class="view hidden">
+    <h2>สมัครสมาชิก</h2>
+    <form class="auth-form" onsubmit="return register(event)">
+      <input id="register-username" type="text" placeholder="ชื่อผู้ใช้" required />
+      <input id="register-password" type="password" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัว)" required />
+      <button class="btn-primary" type="submit">สมัครสมาชิก</button>
+    </form>
+    <p id="register-error" class="error"></p>
+  </section>
+
+  <!-- ================= ADMIN ================= -->
+  <section id="view-admin" class="view hidden">
+    <h2>🛠️ แผงแอดมิน</h2>
+
+    <h3>เพิ่มสินค้าใหม่</h3>
+    <form class="admin-form" onsubmit="return addProduct(event)">
+      <input id="p-name" type="text" placeholder="ชื่อสินค้า" required />
+      <select id="p-type" required>
+        <option value="item">ไอเท็มเกม</option>
+        <option value="code">โค้ดเกม</option>
+        <option value="account">ไอดีเกม</option>
+      </select>
+      <input id="p-game" type="text" placeholder="ชื่อเกม / หมวดหมู่หลัก (เช่น Roblox Toy Code)" required />
+      <input id="p-subcategory" type="text" placeholder="หมวดหมู่ย่อย (ไม่บังคับ เช่น ของแต่งตัว, บัตรเติมเงิน)" />
+      <input id="p-price" type="number" step="0.01" placeholder="ราคาขาย (บาท)" required />
+      <input id="p-compare-price" type="number" step="0.01" placeholder="ราคาก่อนลด (บาท) — เว้นว่างได้ถ้าไม่มีส่วนลด" />
+      <label class="checkbox-label"><input id="p-hot" type="checkbox" /> แสดงป้าย HOT</label>
+      <textarea id="p-description" placeholder="รายละเอียดสินค้า"></textarea>
+      <label class="file-label">รูปสินค้า (ไม่บังคับ — jpg, png, webp, gif ไม่เกิน 5MB)</label>
+      <input id="p-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+      <img id="p-image-preview" class="image-preview hidden" alt="ตัวอย่างรูป" />
+      <textarea id="p-codes" placeholder="รายการโค้ด/ข้อมูลไอดี (บรรทัดละ 1 รายการ) — จำนวนสต๊อกจะนับตามจำนวนบรรทัด"></textarea>
+      <button class="btn-primary" type="submit">เพิ่มสินค้า</button>
+    </form>
+    <p id="admin-product-msg" class="success"></p>
+
+    <h3>ออเดอร์ที่รอยืนยัน (พร้อมเพย์)</h3>
+    <div id="admin-orders"></div>
+
+    <h3>รายการเติมเงินที่รอยืนยัน</h3>
+    <div id="admin-topups"></div>
+
+    <h3>แบนเนอร์โปรโมชัน</h3>
+    <form class="admin-form" onsubmit="return addBanner(event)">
+      <input id="b-title" type="text" placeholder="หัวข้อแบนเนอร์" required />
+      <input id="b-subtitle" type="text" placeholder="คำโปรย (ไม่บังคับ)" />
+      <input id="b-link" type="text" placeholder="ลิงก์เมื่อกดแบนเนอร์ (ไม่บังคับ)" />
+      <label class="file-label">รูปแบนเนอร์ (ไม่บังคับ — ถ้าไม่ใส่จะใช้พื้นหลังไล่สีม่วงแทน)</label>
+      <input id="b-image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+      <button class="btn-primary" type="submit">เพิ่มแบนเนอร์</button>
+    </form>
+    <p id="admin-banner-msg" class="success"></p>
+    <div id="admin-banners-list"></div>
+
+    <h3>ข้อมูลติดต่อร้าน</h3>
+    <form class="admin-form" onsubmit="return saveContactSettings(event)">
+      <input id="s-line" type="text" placeholder="LINE ID (เช่น @yurishop)" />
+      <input id="s-facebook" type="text" placeholder="ลิงก์ Facebook Page" />
+      <input id="s-phone" type="text" placeholder="เบอร์โทรติดต่อ" />
+      <input id="s-hours" type="text" placeholder="เวลาทำการ (เช่น ทุกวัน 9:00-22:00)" />
+      <button class="btn-primary" type="submit">บันทึกข้อมูลติดต่อ</button>
+    </form>
+    <p id="admin-contact-msg" class="success"></p>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
